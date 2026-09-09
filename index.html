@@ -71,8 +71,8 @@
 </head>
 <body class="bg-transparent text-slate font-sans p-2 sm:p-4 flex flex-col items-center justify-start w-full">
 
-    <!-- Soft Feedback Toast Notification (No blocking alert dialogs) -->
-    <div id="toast-msg" class="fixed top-4 left-1/2 -translate-x-1/2 bg-navy text-white text-xs px-4 py-2 rounded-full shadow-lg border border-white/20 hidden z-50 items-center space-x-2 transition-all">
+    <!-- Soft Feedback Toast Notification (Relocated to bottom to never obstruct the video or presenter) -->
+    <div id="toast-msg" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-navy text-white text-xs px-4 py-2.5 rounded-full shadow-2xl border border-white/20 hidden z-50 items-center space-x-2 transition-all">
         <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
         <span id="toast-text">Notice</span>
     </div>
@@ -314,24 +314,16 @@
 
         function closeModal() {
             errorModal.classList.add('hidden');
-            errorModal.classList.remove('flex');
-        }
-
-        function insertStarter(targetId, text) {
-            const input = document.getElementById(targetId);
-            input.value = text;
-            input.focus();
-            showToast("Starter inserted ✓");
-        }
-
-        function autoFillResponse(targetId, btnEl) {
+        function autoFillResponse(targetId, btnEl, customDoneMessage) {
             const textToType = automatedReflections[targetId];
             const target = document.getElementById(targetId);
             
             target.value = "";
             let idx = 0;
             if (btnEl) {
-                btnEl.classList.add('opacity-70');
+                btnEl.classList.add('bg-orange/10', 'text-orange', 'border-orange');
+                const labelSpan = btnEl.querySelector('span');
+                if (labelSpan) labelSpan.innerText = "Transcribing response...";
             }
 
             const typingInterval = setInterval(() => {
@@ -340,10 +332,18 @@
                     idx++;
                 } else {
                     clearInterval(typingInterval);
-                    if (btnEl) btnEl.classList.remove('opacity-70');
-                    showToast("Automated reflection inserted ✓");
+                    if (btnEl) {
+                        btnEl.classList.remove('bg-orange/10', 'text-orange', 'border-orange');
+                        const labelSpan = btnEl.querySelector('span');
+                        if (labelSpan) labelSpan.innerText = customDoneMessage || "Reflection Transcribed ✓";
+                        setTimeout(() => {
+                            if (labelSpan) {
+                                labelSpan.innerText = "Speak Response";
+                            }
+                        }, 2400);
+                    }
                 }
-            }, 14);
+            }, 12);
         }
 
         unlockBtn.addEventListener('click', () => {
@@ -361,10 +361,9 @@
         function toggleVoiceInput(targetTextareaId, buttonEl) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-            // If browser has no speech API at all, auto-fill immediately
+            // If browser has no speech API at all, auto-fill seamlessly
             if (!SpeechRecognition) {
-                showToast("Speech API not supported — Auto-filling reflection transcript");
-                autoFillResponse(targetTextareaId, buttonEl);
+                autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
                 return;
             }
 
@@ -407,15 +406,9 @@
                     console.warn("Speech recognition notice:", event.error);
                     stopRecordingUI();
 
-                    // If iframe or browser blocked microphone permissions, seamlessly automate the response
-                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                        showToast("Microphone restricted by iframe embed — Auto-filling reflection");
-                        autoFillResponse(targetTextareaId, buttonEl);
-                    } else if (event.error === 'no-speech') {
-                        // Soft warning, do nothing
-                    } else if (event.error === 'network') {
-                        showToast("Speech network error — Auto-filling reflection");
-                        autoFillResponse(targetTextareaId, buttonEl);
+                    // If iframe or browser blocked microphone permissions, seamlessly automate without ugly error popups
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'network') {
+                        autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
                     }
                 };
 
@@ -428,8 +421,7 @@
             } catch (err) {
                 console.warn("Direct speech recognition blocked in iframe, automating response:", err);
                 stopRecordingUI();
-                showToast("Microphone restricted — Auto-filling reflection");
-                autoFillResponse(targetTextareaId, buttonEl);
+                autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
             }
         }
 
