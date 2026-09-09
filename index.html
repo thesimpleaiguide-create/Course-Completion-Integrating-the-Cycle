@@ -66,6 +66,15 @@
         .chip-btn:hover {
             transform: translateY(-1px);
         }
+
+        /* Pop-out modal animation */
+        .modal-fade-in {
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-transparent text-slate font-sans p-2 sm:p-4 flex flex-col items-center justify-start w-full">
@@ -87,6 +96,74 @@
             <button onclick="closeModal()" class="w-full bg-navy hover:bg-trust text-white py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer">
                 Close
             </button>
+        </div>
+    </div>
+
+    <!-- Results Pop-Out Window / Modal -->
+    <div id="results-modal" class="fixed inset-0 bg-navy/80 backdrop-blur-xs hidden items-center justify-center z-50 p-3 sm:p-6 overflow-y-auto">
+        <div id="results-modal-card" class="bg-white border border-ice rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col my-auto modal-fade-in">
+            
+            <!-- Modal Header -->
+            <div class="bg-navy text-white px-5 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between border-b border-white/10">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <div>
+                        <div class="text-[10px] uppercase font-mono tracking-wider text-ice/70">Stage 4 Complete · Debrief</div>
+                        <h3 class="text-xs sm:text-sm font-bold text-white">Dr. Lindsay Dubock • Course Debrief</h3>
+                    </div>
+                </div>
+                <button onclick="closeResultsModal()" class="text-ice/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer" title="Close">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div class="p-5 sm:p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                
+                <!-- Feedback Container -->
+                <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 sm:p-5 shadow-inner space-y-2">
+                    <div class="flex items-center space-x-2 text-emerald-900 font-bold text-xs sm:text-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                        <span>Clinical Feedback & Action Insight</span>
+                    </div>
+                    <div id="feedback-content" class="text-xs sm:text-sm text-emerald-950 leading-relaxed space-y-2.5 whitespace-pre-wrap"></div>
+                </div>
+
+                <!-- Personal Action Anchor Card -->
+                <div id="anchor-card" class="bg-navy text-white rounded-xl p-4 sm:p-5 relative overflow-hidden border border-white/15 shadow-sm">
+                    <div class="flex justify-between items-start border-b border-white/10 pb-2.5 mb-2.5">
+                        <div>
+                            <span class="text-[9px] font-bold tracking-widest text-orange uppercase">Frontline Action Anchor</span>
+                            <h4 class="text-sm font-bold text-white">My Personal Practice Commitment</h4>
+                        </div>
+                        <button onclick="copyAnchorCard()" class="text-[11px] bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded border border-white/15 transition cursor-pointer">
+                            📋 Copy Card
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-ice/70 mb-0.5">My Commitment on the Line:</p>
+                    <p id="card-commitment" class="text-xs sm:text-sm font-semibold text-white mb-3 italic leading-snug"></p>
+                    
+                    <div class="bg-white/5 rounded-lg p-2.5 border-l-3 border-orange">
+                        <p class="text-[11px] text-ice/90 italic">
+                            "Understanding the driver does not excuse the behaviour. But it transforms your response from reactive to purposeful. That is the difference between surviving an encounter and resolving it."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action / Dismiss Button -->
+                <div class="pt-1 flex items-center justify-between">
+                    <button onclick="copyAnchorCard()" class="text-xs font-semibold text-trust hover:text-navy transition cursor-pointer">
+                        📋 Copy Action Anchor
+                    </button>
+                    <button onclick="closeResultsModal()" class="bg-navy hover:bg-trust text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer shadow-sm">
+                        Close Pop-out & Review
+                    </button>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
@@ -161,20 +238,25 @@
                 </button>
             </div>
 
-            <!-- AI Coach Feedback & Action Card Output -->
+            <!-- AI Coach Feedback & Action Card Output (Also displayed inline below for review) -->
             <div id="coach-feedback-area" class="hidden space-y-4 pt-1">
                 
                 <!-- Feedback Container -->
                 <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 sm:p-5 shadow-inner space-y-2">
-                    <div class="flex items-center space-x-2 text-emerald-900 font-bold text-xs sm:text-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                        <span>Dr. Lindsay Dubock • Reflection Debrief</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2 text-emerald-900 font-bold text-xs sm:text-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                            <span>Dr. Lindsay Dubock • Reflection Debrief</span>
+                        </div>
+                        <button onclick="openResultsModal()" class="text-[11px] text-trust hover:underline font-semibold cursor-pointer">
+                            Open in Pop-out ↗
+                        </button>
                     </div>
-                    <div id="feedback-content" class="text-xs sm:text-sm text-emerald-950 leading-relaxed space-y-2.5 whitespace-pre-wrap"></div>
+                    <div id="feedback-content-inline" class="text-xs sm:text-sm text-emerald-950 leading-relaxed space-y-2.5 whitespace-pre-wrap"></div>
                 </div>
 
                 <!-- Personal Action Anchor Card -->
-                <div id="anchor-card" class="bg-navy text-white rounded-xl p-4 sm:p-5 relative overflow-hidden border border-white/15 shadow-sm">
+                <div class="bg-navy text-white rounded-xl p-4 sm:p-5 relative overflow-hidden border border-white/15 shadow-sm">
                     <div class="flex justify-between items-start border-b border-white/10 pb-2.5 mb-2.5">
                         <div>
                             <span class="text-[9px] font-bold tracking-widest text-orange uppercase">Frontline Action Anchor</span>
@@ -185,7 +267,7 @@
                         </button>
                     </div>
                     <p class="text-[11px] text-ice/70 mb-0.5">My Commitment on the Line:</p>
-                    <p id="card-commitment" class="text-xs sm:text-sm font-semibold text-white mb-3 italic leading-snug"></p>
+                    <p id="card-commitment-inline" class="text-xs sm:text-sm font-semibold text-white mb-3 italic leading-snug"></p>
                     
                     <div class="bg-white/5 rounded-lg p-2.5 border-l-3 border-orange">
                         <p class="text-[11px] text-ice/90 italic">
@@ -206,10 +288,15 @@
         const submitReflectionBtn = document.getElementById('submit-reflection-btn');
         const coachFeedbackArea = document.getElementById('coach-feedback-area');
         const feedbackContent = document.getElementById('feedback-content');
+        const feedbackContentInline = document.getElementById('feedback-content-inline');
         const cardCommitment = document.getElementById('card-commitment');
+        const cardCommitmentInline = document.getElementById('card-commitment-inline');
 
         const errorModal = document.getElementById('error-modal');
         const modalText = document.getElementById('modal-text');
+
+        const resultsModal = document.getElementById('results-modal');
+        let reflectionCompleted = false;
 
         function showToast(msg) {
             const toast = document.getElementById('toast-msg');
@@ -234,6 +321,16 @@
             errorModal.classList.remove('flex');
         }
 
+        function openResultsModal() {
+            resultsModal.classList.remove('hidden');
+            resultsModal.classList.add('flex');
+        }
+
+        function closeResultsModal() {
+            resultsModal.classList.add('hidden');
+            resultsModal.classList.remove('flex');
+        }
+
         function generateLindsayFeedback(q1, q2) {
             const p1 = `What you have recognized regarding patient behaviour touches the core of primary care practice. When an individual reacts with hostility, sharp defensiveness, or withdrawal, it is almost never about personal malice. You are seeing clinical data that indicates fear, acute shame, or a profound loss of control. Honouring that emotional reality allows you to step out of the combat zone and protect your own energy.`;
 
@@ -245,6 +342,11 @@
         }
 
         submitReflectionBtn.addEventListener('click', () => {
+            if (reflectionCompleted) {
+                openResultsModal();
+                return;
+            }
+
             const q1 = answer1.value.trim();
             const q2 = answer2.value.trim();
 
@@ -259,23 +361,39 @@
             setTimeout(() => {
                 const feedbackText = generateLindsayFeedback(q1, q2);
 
+                // Populate modal content
                 feedbackContent.innerText = feedbackText;
                 cardCommitment.innerText = `"${q2}"`;
+
+                // Populate inline content
+                feedbackContentInline.innerText = feedbackText;
+                cardCommitmentInline.innerText = `"${q2}"`;
+
                 coachFeedbackArea.classList.remove('hidden');
 
                 // Switch video to celebratory closing video
                 coachVideo.src = "Cycle_Finale.mp4";
                 coachVideo.play().catch(e => console.warn("Autoplay note:", e));
 
-                submitReflectionBtn.innerHTML = "Reflection Completed & Locked In ✓";
-                submitReflectionBtn.className = "w-full bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm text-xs sm:text-sm";
+                reflectionCompleted = true;
+                submitReflectionBtn.disabled = false;
+                submitReflectionBtn.innerHTML = "View My Reflection & Debrief 🔍";
+                submitReflectionBtn.className = "w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 px-5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm text-xs sm:text-sm cursor-pointer";
 
-                coachFeedbackArea.scrollIntoView({ behavior: 'smooth' });
+                // Open the Pop-out window immediately
+                openResultsModal();
             }, 600);
         });
 
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !resultsModal.classList.contains('hidden')) {
+                closeResultsModal();
+            }
+        });
+
         function copyAnchorCard() {
-            const commitment = cardCommitment.innerText;
+            const commitment = cardCommitment.innerText || cardCommitmentInline.innerText;
             const quote = "Understanding the driver does not excuse the behaviour. But it transforms your response from reactive to purposeful.";
             const textToCopy = `[PRIMARY CARE ACTION ANCHOR]\nMy Commitment: ${commitment}\nCore Reminder: "${quote}"`;
 
