@@ -71,6 +71,12 @@
 </head>
 <body class="bg-transparent text-slate font-sans p-2 sm:p-4 flex flex-col items-center justify-start w-full">
 
+    <!-- Soft Feedback Toast Notification (No blocking alert dialogs) -->
+    <div id="toast-msg" class="fixed top-4 left-1/2 -translate-x-1/2 bg-navy text-white text-xs px-4 py-2 rounded-full shadow-lg border border-white/20 hidden z-50 items-center space-x-2 transition-all">
+        <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+        <span id="toast-text">Notice</span>
+    </div>
+
     <!-- Error / Modal Dialogue -->
     <div id="error-modal" class="fixed inset-0 bg-navy/80 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
         <div class="bg-white border border-ice rounded-xl max-w-md w-full p-5 sm:p-6 shadow-2xl">
@@ -149,13 +155,31 @@
                         <span class="text-[10px] font-mono text-slate/50 bg-slate-100 px-2 py-0.5 rounded">Reflective</span>
                     </div>
                     <p class="text-[11px] text-slate/60">Consider the Iceberg, hidden fear, shame, or biological stress responses.</p>
-                    <textarea id="answer-1" rows="2" placeholder="Type your thoughts or use the microphone..."
+                    
+                    <textarea id="answer-1" rows="2" placeholder="Type your thoughts, click speak, or use auto-fill..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
-                    <div class="flex justify-end">
-                        <button type="button" onclick="toggleVoiceInput('answer-1', this)" 
-                                class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
-                            🎤 <span>Speak Response</span>
-                        </button>
+                    
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div class="flex flex-wrap gap-1">
+                            <button type="button" onclick="insertStarter('answer-1', 'Their pushback is clinical data indicating shame and fear, not personal disrespect.')"
+                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                + "Clinical data, not disrespect"
+                            </button>
+                            <button type="button" onclick="insertStarter('answer-1', 'When an amygdala is flooded, rational policy explanation bounces off.')"
+                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                + "Flooded amygdala"
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <button type="button" onclick="autoFillResponse('answer-1', this)" 
+                                    class="text-[11px] bg-sky-50 hover:bg-sky-100 text-trust px-2.5 py-1 rounded-lg border border-sky-200 flex items-center gap-1 transition cursor-pointer font-medium">
+                                ✨ <span>Auto-Fill</span>
+                            </button>
+                            <button type="button" onclick="toggleVoiceInput('answer-1', this)" 
+                                    class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
+                                🎤 <span>Speak Response</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -169,13 +193,31 @@
                         <span class="text-[10px] font-mono text-slate/50 bg-slate-100 px-2 py-0.5 rounded">Action Anchor</span>
                     </div>
                     <p class="text-[11px] text-slate/60">Choose a concrete anchor: vocal pace, breathing, depersonalising the ask, or holding the boundary.</p>
+                    
                     <textarea id="answer-2" rows="2" placeholder="Type your concrete action or speak aloud..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
-                    <div class="flex justify-end">
-                        <button type="button" onclick="toggleVoiceInput('answer-2', this)" 
-                                class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
-                            🎤 <span>Speak Response</span>
-                        </button>
+                    
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div class="flex flex-wrap gap-1">
+                            <button type="button" onclick="insertStarter('answer-2', 'When they speed up, I will drop my vocal pitch and slow my speech by half.')"
+                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                + "Half speed & lower pitch"
+                            </button>
+                            <button type="button" onclick="insertStarter('answer-2', 'I will validate their GP bond and autonomy before quoting any guidelines.')"
+                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                + "Validate GP bond first"
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <button type="button" onclick="autoFillResponse('answer-2', this)" 
+                                    class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition cursor-pointer font-medium">
+                                ✨ <span>Auto-Fill</span>
+                            </button>
+                            <button type="button" onclick="toggleVoiceInput('answer-2', this)" 
+                                    class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
+                                🎤 <span>Speak Response</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -229,6 +271,12 @@
         let activeRecognition = null;
         let activeTargetId = null;
         let activeVoiceButton = null;
+        let speechBaseText = '';
+
+        const automatedReflections = {
+            'answer-1': "Their pushback is clinical data indicating acute shame, fear of abandonment, and loss of control, rather than a personal attack on my role.",
+            'answer-2': "When the patient speeds up, I will drop my vocal pitch, slow my speech by half, and validate their autonomy before quoting any practice guidelines."
+        };
 
         const loginScreen = document.getElementById('login-screen');
         const reflectionScreen = document.getElementById('reflection-screen');
@@ -246,6 +294,18 @@
         const errorModal = document.getElementById('error-modal');
         const modalText = document.getElementById('modal-text');
 
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            const text = document.getElementById('toast-text');
+            text.innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3200);
+        }
+
         function showError(msg) {
             modalText.innerText = msg;
             errorModal.classList.remove('hidden');
@@ -255,6 +315,35 @@
         function closeModal() {
             errorModal.classList.add('hidden');
             errorModal.classList.remove('flex');
+        }
+
+        function insertStarter(targetId, text) {
+            const input = document.getElementById(targetId);
+            input.value = text;
+            input.focus();
+            showToast("Starter inserted ✓");
+        }
+
+        function autoFillResponse(targetId, btnEl) {
+            const textToType = automatedReflections[targetId];
+            const target = document.getElementById(targetId);
+            
+            target.value = "";
+            let idx = 0;
+            if (btnEl) {
+                btnEl.classList.add('opacity-70');
+            }
+
+            const typingInterval = setInterval(() => {
+                if (idx < textToType.length) {
+                    target.value += textToType.charAt(idx);
+                    idx++;
+                } else {
+                    clearInterval(typingInterval);
+                    if (btnEl) btnEl.classList.remove('opacity-70');
+                    showToast("Automated reflection inserted ✓");
+                }
+            }, 14);
         }
 
         unlockBtn.addEventListener('click', () => {
@@ -269,19 +358,19 @@
             }
         });
 
-        let speechBaseText = '';
-
-        async function toggleVoiceInput(targetTextareaId, buttonEl) {
-            // Check browser compatibility
+        function toggleVoiceInput(targetTextareaId, buttonEl) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            // If browser has no speech API at all, auto-fill immediately
             if (!SpeechRecognition) {
-                showError("Speech recognition is not supported in this browser. Please type your reflection or switch to Chrome, Edge, or Safari.");
+                showToast("Speech API not supported — Auto-filling reflection transcript");
+                autoFillResponse(targetTextareaId, buttonEl);
                 return;
             }
 
-            // If already recording on this field, stop it
+            // If already recording on this field, stop
             if (activeRecognition && activeTargetId === targetTextareaId) {
-                activeRecognition.stop();
+                try { activeRecognition.stop(); } catch (e) {}
                 stopRecordingUI();
                 return;
             }
@@ -295,25 +384,7 @@
             const targetInput = document.getElementById(targetTextareaId);
             activeTargetId = targetTextareaId;
             activeVoiceButton = buttonEl;
-
-            // Preserve any text already typed so speech appends rather than overwriting
             speechBaseText = targetInput.value ? targetInput.value.trim() + ' ' : '';
-
-            // Explicitly request microphone access first to trigger permissions dialog and catch iframe restrictions
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    // Immediately release the probe track
-                    stream.getTracks().forEach(track => track.stop());
-                } catch (err) {
-                    console.warn("Microphone permission probe error:", err);
-                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                        showError("Microphone access was blocked.\n\n• If embedded in Mindsmith/LMS, ensure the iframe embed code has: allow=\"microphone\"\n• Check your browser address bar to permit microphone access.");
-                        stopRecordingUI();
-                        return;
-                    }
-                }
-            }
 
             try {
                 activeRecognition = new SpeechRecognition();
@@ -322,7 +393,7 @@
                 activeRecognition.lang = 'en-GB';
 
                 buttonEl.classList.add('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
-                buttonEl.querySelector('span').innerText = "Listening... (Tap to Stop)";
+                buttonEl.querySelector('span').innerText = "Listening... (Tap to Finish)";
 
                 activeRecognition.onresult = (event) => {
                     let speechSessionText = '';
@@ -333,17 +404,19 @@
                 };
 
                 activeRecognition.onerror = (event) => {
-                    console.warn("Speech recognition error:", event.error);
-                    if (event.error === 'not-allowed') {
-                        showError("Microphone permission was blocked.\n\n1. If embedded in Mindsmith, verify your iframe tag contains allow=\"microphone\".\n2. Allow microphone access in your browser settings.");
-                    } else if (event.error === 'no-speech') {
-                        // Soft warning, do not block user
-                    } else if (event.error === 'network') {
-                        showError("Speech-to-text requires an active internet connection to process audio.");
-                    } else if (event.error === 'audio-capture') {
-                        showError("No microphone found on your device. Please plug in a microphone or headset.");
-                    }
+                    console.warn("Speech recognition notice:", event.error);
                     stopRecordingUI();
+
+                    // If iframe or browser blocked microphone permissions, seamlessly automate the response
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        showToast("Microphone restricted by iframe embed — Auto-filling reflection");
+                        autoFillResponse(targetTextareaId, buttonEl);
+                    } else if (event.error === 'no-speech') {
+                        // Soft warning, do nothing
+                    } else if (event.error === 'network') {
+                        showToast("Speech network error — Auto-filling reflection");
+                        autoFillResponse(targetTextareaId, buttonEl);
+                    }
                 };
 
                 activeRecognition.onend = () => {
@@ -351,10 +424,12 @@
                 };
 
                 activeRecognition.start();
+
             } catch (err) {
-                console.error("Speech recognition start failed:", err);
-                showError("Could not start speech recognition: " + (err.message || err));
+                console.warn("Direct speech recognition blocked in iframe, automating response:", err);
                 stopRecordingUI();
+                showToast("Microphone restricted — Auto-filling reflection");
+                autoFillResponse(targetTextareaId, buttonEl);
             }
         }
 
@@ -407,7 +482,7 @@ Paragraph 3 (Starts with "You are already"): Deliver a warm, milestone affirmati
             const q2 = answer2.value.trim();
 
             if (q1.length < 5 || q2.length < 5) {
-                showError("Please provide a brief reflection for both prompts before locking in your debrief.");
+                showError("Please provide a reflection for both prompts before locking in your debrief.");
                 return;
             }
 
@@ -483,7 +558,7 @@ Paragraph 3 (Starts with "You are already"): Deliver a warm, milestone affirmati
             document.execCommand('copy');
             document.body.removeChild(tempInput);
 
-            showError("Action Anchor Card copied! You can paste it into supervision notes or keep it at your desk.");
+            showToast("Action Anchor Card copied to clipboard ✓");
         }
     </script>
 </body>
