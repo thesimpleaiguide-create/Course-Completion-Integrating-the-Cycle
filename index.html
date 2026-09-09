@@ -52,14 +52,6 @@
             margin-right: 8px;
             vertical-align: text-bottom;
         }
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(254, 80, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(254, 80, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(254, 80, 0, 0); }
-        }
-        .recording-pulse {
-            animation: pulse-ring 1.4s infinite;
-        }
         .notebook-lines {
             background-color: #FAFAFA;
             background-image: linear-gradient(#E5E7EB 1px, transparent 1px);
@@ -67,11 +59,18 @@
             line-height: 1.85rem;
         }
         .notebook-lines:focus { outline: none; }
+
+        .chip-btn {
+            transition: all 0.15s ease-out;
+        }
+        .chip-btn:hover {
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="bg-transparent text-slate font-sans p-2 sm:p-4 flex flex-col items-center justify-start w-full">
 
-    <!-- Soft Feedback Toast Notification (Relocated to bottom to never obstruct the video or presenter) -->
+    <!-- Bottom Toast Notification -->
     <div id="toast-msg" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-navy text-white text-xs px-4 py-2.5 rounded-full shadow-2xl border border-white/20 hidden z-50 items-center space-x-2 transition-all">
         <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
         <span id="toast-text">Notice</span>
@@ -156,30 +155,28 @@
                     </div>
                     <p class="text-[11px] text-slate/60">Consider the Iceberg, hidden fear, shame, or biological stress responses.</p>
                     
-                    <textarea id="answer-1" rows="2" placeholder="Type your thoughts, click speak, or use auto-fill..."
+                    <textarea id="answer-1" rows="2" placeholder="Type your personal takeaway, click an idea chip, or use guided auto-fill..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
                     
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                         <div class="flex flex-wrap gap-1">
                             <button type="button" onclick="insertStarter('answer-1', 'Their pushback is clinical data indicating shame and fear, not personal disrespect.')"
-                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
                                 + "Clinical data, not disrespect"
                             </button>
                             <button type="button" onclick="insertStarter('answer-1', 'When an amygdala is flooded, rational policy explanation bounces off.')"
-                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
                                 + "Flooded amygdala"
                             </button>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <button type="button" onclick="autoFillResponse('answer-1', this)" 
-                                    class="text-[11px] bg-sky-50 hover:bg-sky-100 text-trust px-2.5 py-1 rounded-lg border border-sky-200 flex items-center gap-1 transition cursor-pointer font-medium">
-                                ✨ <span>Auto-Fill</span>
-                            </button>
-                            <button type="button" onclick="toggleVoiceInput('answer-1', this)" 
-                                    class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
-                                🎤 <span>Speak Response</span>
+                            <button type="button" onclick="insertStarter('answer-1', 'Behind their hostile barrier is a person trying to protect their dignity.')"
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
+                                + "Protecting dignity"
                             </button>
                         </div>
+                        <button type="button" onclick="autoFillResponse('answer-1', this)" 
+                                class="chip-btn text-[11px] bg-sky-50 hover:bg-sky-100 text-trust px-3 py-1 rounded-lg border border-sky-200 flex items-center gap-1.5 transition cursor-pointer font-medium shadow-2xs">
+                            ✨ <span>Guided Suggestion</span>
+                        </button>
                     </div>
                 </div>
 
@@ -194,30 +191,28 @@
                     </div>
                     <p class="text-[11px] text-slate/60">Choose a concrete anchor: vocal pace, breathing, depersonalising the ask, or holding the boundary.</p>
                     
-                    <textarea id="answer-2" rows="2" placeholder="Type your concrete action or speak aloud..."
+                    <textarea id="answer-2" rows="2" placeholder="Type your concrete action or select an action starter below..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
                     
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
                         <div class="flex flex-wrap gap-1">
                             <button type="button" onclick="insertStarter('answer-2', 'When they speed up, I will drop my vocal pitch and slow my speech by half.')"
-                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
                                 + "Half speed & lower pitch"
                             </button>
                             <button type="button" onclick="insertStarter('answer-2', 'I will validate their GP bond and autonomy before quoting any guidelines.')"
-                                    class="text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-0.5 rounded border border-ice transition cursor-pointer">
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
                                 + "Validate GP bond first"
                             </button>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <button type="button" onclick="autoFillResponse('answer-2', this)" 
-                                    class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1 transition cursor-pointer font-medium">
-                                ✨ <span>Auto-Fill</span>
-                            </button>
-                            <button type="button" onclick="toggleVoiceInput('answer-2', this)" 
-                                    class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
-                                🎤 <span>Speak Response</span>
+                            <button type="button" onclick="insertStarter('answer-2', 'I will take a slow breath and hold the protocol with steady kindness.')"
+                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
+                                + "Protocol with kindness"
                             </button>
                         </div>
+                        <button type="button" onclick="autoFillResponse('answer-2', this)" 
+                                class="chip-btn text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1 rounded-lg border border-amber-200 flex items-center gap-1.5 transition cursor-pointer font-medium shadow-2xs">
+                            ✨ <span>Guided Suggestion</span>
+                        </button>
                     </div>
                 </div>
 
@@ -268,12 +263,8 @@
 
     <script>
         let activeApiKey = '';
-        let activeRecognition = null;
-        let activeTargetId = null;
-        let activeVoiceButton = null;
-        let speechBaseText = '';
 
-        const automatedReflections = {
+        const guidedReflections = {
             'answer-1': "Their pushback is clinical data indicating acute shame, fear of abandonment, and loss of control, rather than a personal attack on my role.",
             'answer-2': "When the patient speeds up, I will drop my vocal pitch, slow my speech by half, and validate their autonomy before quoting any practice guidelines."
         };
@@ -328,8 +319,8 @@
             el.focus();
         }
 
-        function autoFillResponse(targetId, btnEl, customDoneMessage) {
-            const textToType = automatedReflections[targetId];
+        function autoFillResponse(targetId, btnEl) {
+            const textToType = guidedReflections[targetId];
             const target = document.getElementById(targetId);
             
             target.value = "";
@@ -337,7 +328,7 @@
             if (btnEl) {
                 btnEl.classList.add('bg-orange/10', 'text-orange', 'border-orange');
                 const labelSpan = btnEl.querySelector('span');
-                if (labelSpan) labelSpan.innerText = "Transcribing response...";
+                if (labelSpan) labelSpan.innerText = "Generating suggestion...";
             }
 
             const typingInterval = setInterval(() => {
@@ -349,15 +340,15 @@
                     if (btnEl) {
                         btnEl.classList.remove('bg-orange/10', 'text-orange', 'border-orange');
                         const labelSpan = btnEl.querySelector('span');
-                        if (labelSpan) labelSpan.innerText = customDoneMessage || "Reflection Transcribed ✓";
+                        if (labelSpan) labelSpan.innerText = "Suggested ✓";
                         setTimeout(() => {
                             if (labelSpan) {
-                                labelSpan.innerText = "Speak Response";
+                                labelSpan.innerText = "Guided Suggestion";
                             }
                         }, 2400);
                     }
                 }
-            }, 12);
+            }, 10);
         }
 
         function handleUnlock() {
@@ -380,80 +371,6 @@
                 handleUnlock();
             }
         });
-
-        function toggleVoiceInput(targetTextareaId, buttonEl) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                showError("Your browser does not support Speech Recognition. Please type your reflection or use Chrome/Edge.");
-                return;
-            }
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            // If already recording on this field, clicking again stops it cleanly
-            if (activeRecognition && activeTargetId === targetTextareaId) {
-                activeRecognition.stop();
-                stopRecordingUI();
-                return;
-            }
-
-            // If recording on another field, stop that one first
-            if (activeRecognition) {
-                activeRecognition.stop();
-                stopRecordingUI();
-            }
-
-            const targetInput = document.getElementById(targetTextareaId);
-            activeTargetId = targetTextareaId;
-            activeVoiceButton = buttonEl;
-            speechBaseText = targetInput.value ? targetInput.value.trim() + ' ' : '';
-
-            activeRecognition = new SpeechRecognition();
-            activeRecognition.continuous = true;
-            activeRecognition.interimResults = true;
-            activeRecognition.lang = 'en-GB';
-
-            buttonEl.classList.add('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
-            buttonEl.querySelector('span').innerText = "Listening (Click to Finish)";
-
-            activeRecognition.onresult = (event) => {
-                let speechSessionText = '';
-                for (let i = 0; i < event.results.length; ++i) {
-                    speechSessionText += event.results[i][0].transcript;
-                }
-                targetInput.value = speechBaseText + speechSessionText.trim();
-            };
-
-            activeRecognition.onerror = (event) => {
-                console.warn("Speech error:", event.error);
-                stopRecordingUI();
-                if (event.error === 'not-allowed') {
-                    showToast("Microphone access was denied. You can use the ✨ Auto-Fill button.");
-                }
-            };
-
-            activeRecognition.onend = () => {
-                stopRecordingUI();
-            };
-
-            try {
-                // Direct native start immediately opens the browser prompt
-                activeRecognition.start();
-            } catch (err) {
-                console.error("SpeechRecognition start error:", err);
-                stopRecordingUI();
-            }
-        }
-
-        function stopRecordingUI() {
-            if (activeVoiceButton) {
-                activeVoiceButton.classList.remove('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
-                activeVoiceButton.querySelector('span').innerText = "Speak Response";
-            }
-            activeRecognition = null;
-            activeTargetId = null;
-            activeVoiceButton = null;
-            speechBaseText = '';
-        }
 
         function buildLindsayPrompt(q1Text, q2Text) {
             return `Role: Dr. Lindsay Dubock (Clinical Director, The Training Network)
@@ -485,10 +402,6 @@ Paragraph 3 (Starts with "You are already"): Deliver a warm, milestone affirmati
         }
 
         submitReflectionBtn.addEventListener('click', async () => {
-            if (activeRecognition) {
-                try { activeRecognition.stop(); } catch (e) {}
-            }
-
             const q1 = answer1.value.trim();
             const q2 = answer2.value.trim();
 
