@@ -91,6 +91,38 @@
         </div>
     </div>
 
+    <!-- Microphone Permission Helper Modal -->
+    <div id="mic-modal" class="fixed inset-0 bg-navy/80 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+        <div class="bg-white border border-ice rounded-xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
+            <div class="flex items-center space-x-2 text-navy font-bold text-base">
+                <span class="w-3 h-3 rounded-full bg-orange"></span>
+                <span>Microphone Permission Required</span>
+            </div>
+            <p class="text-slate/85 text-xs sm:text-sm leading-relaxed">
+                The browser could not open the microphone prompt. This usually happens for one of two reasons:
+            </p>
+            <ul class="text-xs sm:text-sm text-slate/75 space-y-2 list-disc pl-5">
+                <li>
+                    <strong>Iframe Security (LMS / Mindsmith):</strong> When embedded inside an LMS iframe, the platform must allow the microphone via 
+                    <code class="bg-slate-100 text-navy font-mono px-1.5 py-0.5 rounded border border-ice text-[11px]">allow="microphone"</code>.
+                </li>
+                <li>
+                    <strong>Browser Site Settings:</strong> Check the lock / site settings icon in your browser's address bar to ensure microphone access is set to <strong>Allow</strong>.
+                </li>
+            </ul>
+            <div class="pt-2 flex flex-col sm:flex-row gap-2">
+                <button id="mic-autofill-btn" onclick="applyMicModalAutoFill()" 
+                        class="flex-1 bg-trust hover:bg-navy text-white py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer">
+                    ✨ Use Instant Auto-Fill
+                </button>
+                <button onclick="closeMicModal()" 
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="max-w-3xl w-full bg-white border border-ice rounded-2xl p-4 sm:p-6 shadow-md flex flex-col space-y-4">
 
         <!-- Screen 1: API Key Unlock Screen -->
@@ -293,6 +325,7 @@
 
         const errorModal = document.getElementById('error-modal');
         const modalText = document.getElementById('modal-text');
+        const micModal = document.getElementById('mic-modal');
 
         function showToast(msg) {
             const toast = document.getElementById('toast-msg');
@@ -315,6 +348,25 @@
         function closeModal() {
             errorModal.classList.add('hidden');
             errorModal.classList.remove('flex');
+        }
+
+        function closeMicModal() {
+            micModal.classList.add('hidden');
+            micModal.classList.remove('flex');
+        }
+
+        function showMicBlockedNotice(targetId, btnEl) {
+            activeTargetId = targetId;
+            activeVoiceButton = btnEl;
+            micModal.classList.remove('hidden');
+            micModal.classList.add('flex');
+        }
+
+        function applyMicModalAutoFill() {
+            closeMicModal();
+            if (activeTargetId && activeVoiceButton) {
+                autoFillResponse(activeTargetId, activeVoiceButton, "Reflection Transcribed ✓");
+            }
         }
 
         function insertStarter(targetId, text) {
@@ -381,15 +433,7 @@
             }
         });
 
-        function toggleVoiceInput(targetTextareaId, buttonEl) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            // If browser has no speech API at all, auto-fill seamlessly
-            if (!SpeechRecognition) {
-                autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
-                return;
-            }
-
+        async function toggleVoiceInput(targetTextareaId, buttonEl) {
             // If already recording on this field, stop
             if (activeRecognition && activeTargetId === targetTextareaId) {
                 try { activeRecognition.stop(); } catch (e) {}
@@ -403,9 +447,35 @@
                 stopRecordingUI();
             }
 
-            const targetInput = document.getElementById(targetTextareaId);
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                showError("Speech Recognition is not supported in this browser. Please use Chrome or Edge, or use the Auto-Fill button.");
+                return;
+            }
+
             activeTargetId = targetTextareaId;
             activeVoiceButton = buttonEl;
+
+            // Step 1: Explicitly trigger the browser's native permission dialog via getUserMedia
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const labelSpan = buttonEl.querySelector('span');
+                    if (labelSpan) labelSpan.innerText = "Requesting mic...";
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    // Immediately release the probe stream tracks; permission is now granted for this origin
+                    stream.getTracks().forEach(track => track.stop());
+                } catch (permErr) {
+                    console.warn("Microphone permission prompt rejected or blocked by iframe policy:", permErr);
+                    stopRecordingUI();
+                    showMicBlockedNotice(targetTextareaId, buttonEl);
+                    return;
+                }
+            }
+
+            // Step 2: Now that permission is established, launch SpeechRecognition
+            const targetInput = document.getElementById(targetTextareaId);
             speechBaseText = targetInput.value ? targetInput.value.trim() + ' ' : '';
 
             try {
@@ -429,8 +499,10 @@
                     console.warn("Speech recognition notice:", event.error);
                     stopRecordingUI();
 
-                    // If iframe or browser blocked microphone permissions, seamlessly automate without ugly error popups
-                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'network') {
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        showMicBlockedNotice(targetTextareaId, buttonEl);
+                    } else if (event.error === 'network') {
+                        showToast("Network speech recognition issue. Using quick auto-fill.");
                         autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
                     }
                 };
@@ -442,9 +514,9 @@
                 activeRecognition.start();
 
             } catch (err) {
-                console.warn("Direct speech recognition blocked in iframe, automating response:", err);
+                console.warn("Speech recognition launch failed:", err);
                 stopRecordingUI();
-                autoFillResponse(targetTextareaId, buttonEl, "Reflection Transcribed ✓");
+                showMicBlockedNotice(targetTextareaId, buttonEl);
             }
         }
 
