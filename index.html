@@ -269,55 +269,91 @@
             }
         });
 
-        function toggleVoiceInput(targetTextareaId, buttonEl) {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                showError("Speech recognition is not supported in this browser. Please type your reflection or switch to Chrome/Edge.");
+        let speechBaseText = '';
+
+        async function toggleVoiceInput(targetTextareaId, buttonEl) {
+            // Check browser compatibility
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showError("Speech recognition is not supported in this browser. Please type your reflection or switch to Chrome, Edge, or Safari.");
                 return;
             }
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+            // If already recording on this field, stop it
             if (activeRecognition && activeTargetId === targetTextareaId) {
                 activeRecognition.stop();
+                stopRecordingUI();
                 return;
             }
 
+            // If recording on another field, stop that one first
             if (activeRecognition) {
-                activeRecognition.stop();
+                try { activeRecognition.stop(); } catch (e) {}
+                stopRecordingUI();
             }
 
             const targetInput = document.getElementById(targetTextareaId);
             activeTargetId = targetTextareaId;
             activeVoiceButton = buttonEl;
 
-            activeRecognition = new SpeechRecognition();
-            activeRecognition.continuous = true;
-            activeRecognition.interimResults = true;
+            // Preserve any text already typed so speech appends rather than overwriting
+            speechBaseText = targetInput.value ? targetInput.value.trim() + ' ' : '';
 
-            buttonEl.classList.add('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
-            buttonEl.querySelector('span').innerText = "Listening...";
-
-            activeRecognition.onresult = (event) => {
-                let full = '';
-                for (let i = 0; i < event.results.length; ++i) {
-                    full += event.results[i][0].transcript + ' ';
+            // Explicitly request microphone access first to trigger permissions dialog and catch iframe restrictions
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    // Immediately release the probe track
+                    stream.getTracks().forEach(track => track.stop());
+                } catch (err) {
+                    console.warn("Microphone permission probe error:", err);
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        showError("Microphone access was blocked.\n\n• If embedded in Mindsmith/LMS, ensure the iframe embed code has: allow=\"microphone\"\n• Check your browser address bar to permit microphone access.");
+                        stopRecordingUI();
+                        return;
+                    }
                 }
-                targetInput.value = full.trim();
-            };
-
-            activeRecognition.onerror = (event) => {
-                console.warn("Speech error:", event.error);
-                stopRecordingUI();
-            };
-
-            activeRecognition.onend = () => {
-                stopRecordingUI();
-            };
+            }
 
             try {
+                activeRecognition = new SpeechRecognition();
+                activeRecognition.continuous = true;
+                activeRecognition.interimResults = true;
+                activeRecognition.lang = 'en-GB';
+
+                buttonEl.classList.add('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
+                buttonEl.querySelector('span').innerText = "Listening... (Tap to Stop)";
+
+                activeRecognition.onresult = (event) => {
+                    let speechSessionText = '';
+                    for (let i = 0; i < event.results.length; ++i) {
+                        speechSessionText += event.results[i][0].transcript;
+                    }
+                    targetInput.value = speechBaseText + speechSessionText.trim();
+                };
+
+                activeRecognition.onerror = (event) => {
+                    console.warn("Speech recognition error:", event.error);
+                    if (event.error === 'not-allowed') {
+                        showError("Microphone permission was blocked.\n\n1. If embedded in Mindsmith, verify your iframe tag contains allow=\"microphone\".\n2. Allow microphone access in your browser settings.");
+                    } else if (event.error === 'no-speech') {
+                        // Soft warning, do not block user
+                    } else if (event.error === 'network') {
+                        showError("Speech-to-text requires an active internet connection to process audio.");
+                    } else if (event.error === 'audio-capture') {
+                        showError("No microphone found on your device. Please plug in a microphone or headset.");
+                    }
+                    stopRecordingUI();
+                };
+
+                activeRecognition.onend = () => {
+                    stopRecordingUI();
+                };
+
                 activeRecognition.start();
             } catch (err) {
-                console.error(err);
+                console.error("Speech recognition start failed:", err);
+                showError("Could not start speech recognition: " + (err.message || err));
                 stopRecordingUI();
             }
         }
@@ -330,6 +366,7 @@
             activeRecognition = null;
             activeTargetId = null;
             activeVoiceButton = null;
+            speechBaseText = '';
         }
 
         function buildLindsayPrompt(q1Text, q2Text) {
