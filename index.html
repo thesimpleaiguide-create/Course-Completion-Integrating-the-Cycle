@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHS Primary Care Training • Module 11: You've Completed the Cycle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0C2340',
+                        deepnavy: '#061426',
+                        trust: '#005EB8',
+                        orange: '#FE5000',
+                        slate: '#333F48',
+                        ice: '#DBE2E9',
+                        cream: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        *, *:before, *:after { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: text-bottom;
+        }
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(254, 80, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(254, 80, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(254, 80, 0, 0); }
+        }
+        .recording-pulse {
+            animation: pulse-ring 1.4s infinite;
+        }
+        .notebook-lines {
+            background-color: #FAFAFA;
+            background-image: linear-gradient(#E5E7EB 1px, transparent 1px);
+            background-size: 100% 1.85rem;
+            line-height: 1.85rem;
+        }
+        .notebook-lines:focus { outline: none; }
+    </style>
+</head>
+<body class="bg-transparent text-slate font-sans p-2 sm:p-4 flex flex-col items-center justify-start w-full">
+
+    <!-- Error / Modal Dialogue -->
+    <div id="error-modal" class="fixed inset-0 bg-navy/80 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+        <div class="bg-white border border-ice rounded-xl max-w-md w-full p-5 sm:p-6 shadow-2xl">
+            <div class="flex items-center space-x-2 text-orange font-bold text-base mb-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange"></span>
+                <span>Notice</span>
+            </div>
+            <p id="modal-text" class="text-slate/85 text-xs sm:text-sm mb-5 leading-relaxed"></p>
+            <button onclick="closeModal()" class="w-full bg-navy hover:bg-trust text-white py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition cursor-pointer">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-3xl w-full bg-white border border-ice rounded-2xl p-4 sm:p-6 shadow-md flex flex-col space-y-4">
+
+        <!-- Screen 1: API Key Unlock Screen -->
+        <div id="login-screen" class="text-center py-6 sm:py-8 space-y-3">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 bg-navy text-white text-[11px] font-bold rounded-full uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+                <span>Module 11 • Integration & Action</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold text-navy">You've Completed the Cycle</h1>
+            <p class="text-slate/75 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
+                Enter your Gemini API key to unlock your personal reflection debrief with Dr. Lindsay Dubock.
+            </p>
+            <div class="max-w-md mx-auto flex flex-col sm:flex-row gap-2 pt-2">
+                <input type="password" id="api-key-input" placeholder="Paste Gemini API Key (AIza...)" 
+                       class="flex-1 bg-slate-50 border border-ice rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-navy focus:outline-none focus:border-navy transition">
+                <button id="unlock-btn" class="bg-navy hover:bg-trust text-white font-bold px-5 py-2.5 rounded-xl transition text-xs sm:text-sm cursor-pointer shadow-sm shrink-0">
+                    Enter Module
+                </button>
+            </div>
+            <p class="text-[10px] text-slate/40 pt-1">Key is held only in your browser session memory.</p>
+        </div>
+
+        <!-- Screen 2: Reflection & Video Experience Screen -->
+        <div id="reflection-screen" class="hidden space-y-4">
+            
+            <!-- Top Header & Cycle Stage Pill -->
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ice/80 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-orange"></span>
+                    <span class="text-xs font-bold text-trust uppercase tracking-wider">Final Course Integration</span>
+                </div>
+                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] sm:text-xs font-bold rounded-full">
+                    Kolb Cycle Stage 4 of 4: Action
+                </span>
+            </div>
+
+            <!-- Video Player (Cycle_Intro.mp4 -> Cycle_Finale.mp4) -->
+            <div class="rounded-xl overflow-hidden bg-black border border-ice aspect-video max-h-[300px] w-full mx-auto relative shadow-2xs">
+                <video id="coach-video" class="w-full h-full object-cover" controls playsinline poster="./facing_camera.jpeg">
+                    <source src="Cycle_Intro.mp4" type="video/mp4">
+                    Your browser does not support video playback.
+                </video>
+            </div>
+
+            <!-- Pedagogical Summary -->
+            <div class="bg-slate-50 border-l-4 border-trust rounded-r-xl p-3.5 sm:p-4 text-xs sm:text-sm text-slate/85 space-y-1.5 border-y border-r border-ice/70">
+                <p>You started with a raw reaction on the Switchboard.</p>
+                <p>You have since named the drivers underneath it, understood the physiology behind it, and practiced a purposeful response.</p>
+                <p class="font-bold text-navy">That is the whole cycle: experience, reflection, understanding, and now, action.</p>
+            </div>
+
+            <!-- Reflection Form -->
+            <div class="space-y-4">
+                
+                <!-- Question 1: Understanding Shift -->
+                <div class="bg-white border border-ice rounded-xl p-3.5 sm:p-4 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs sm:text-sm font-bold text-navy flex items-center space-x-1.5">
+                            <span class="w-4 h-4 rounded-full bg-trust text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                            <span>One thing I understand differently about patient behaviour:</span>
+                        </label>
+                        <span class="text-[10px] font-mono text-slate/50 bg-slate-100 px-2 py-0.5 rounded">Reflective</span>
+                    </div>
+                    <p class="text-[11px] text-slate/60">Consider the Iceberg, hidden fear, shame, or biological stress responses.</p>
+                    <textarea id="answer-1" rows="2" placeholder="Type your thoughts or use the microphone..."
+                              class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
+                    <div class="flex justify-end">
+                        <button type="button" onclick="toggleVoiceInput('answer-1', this)" 
+                                class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
+                            🎤 <span>Speak Response</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question 2: Action Shift -->
+                <div class="bg-white border border-ice rounded-xl p-3.5 sm:p-4 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs sm:text-sm font-bold text-navy flex items-center space-x-1.5">
+                            <span class="w-4 h-4 rounded-full bg-orange text-white text-[10px] flex items-center justify-center font-bold">2</span>
+                            <span>One thing I will try differently in my next difficult encounter:</span>
+                        </label>
+                        <span class="text-[10px] font-mono text-slate/50 bg-slate-100 px-2 py-0.5 rounded">Action Anchor</span>
+                    </div>
+                    <p class="text-[11px] text-slate/60">Choose a concrete anchor: vocal pace, breathing, depersonalising the ask, or holding the boundary.</p>
+                    <textarea id="answer-2" rows="2" placeholder="Type your concrete action or speak aloud..."
+                              class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
+                    <div class="flex justify-end">
+                        <button type="button" onclick="toggleVoiceInput('answer-2', this)" 
+                                class="voice-btn text-[11px] bg-slate-100 hover:bg-ice text-navy px-2.5 py-1 rounded-lg border border-ice flex items-center gap-1 transition cursor-pointer font-medium">
+                            🎤 <span>Speak Response</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Action Button -->
+                <button id="submit-reflection-btn" 
+                        class="w-full bg-navy hover:bg-trust text-white font-bold py-3 px-5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm text-xs sm:text-sm cursor-pointer">
+                    <span>Lock In My Reflection & Receive Coach Debrief</span>
+                </button>
+            </div>
+
+            <!-- AI Coach Feedback & Action Card Output -->
+            <div id="coach-feedback-area" class="hidden space-y-4 pt-1">
+                
+                <!-- Feedback Container -->
+                <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 sm:p-5 shadow-inner space-y-2">
+                    <div class="flex items-center space-x-2 text-emerald-900 font-bold text-xs sm:text-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                        <span>Dr. Lindsay Dubock • Reflection Debrief</span>
+                    </div>
+                    <div id="feedback-content" class="text-xs sm:text-sm text-emerald-950 leading-relaxed space-y-2.5 whitespace-pre-wrap"></div>
+                </div>
+
+                <!-- Personal Action Anchor Card -->
+                <div id="anchor-card" class="bg-navy text-white rounded-xl p-4 sm:p-5 relative overflow-hidden border border-white/15 shadow-sm">
+                    <div class="flex justify-between items-start border-b border-white/10 pb-2.5 mb-2.5">
+                        <div>
+                            <span class="text-[9px] font-bold tracking-widest text-orange uppercase">Frontline Action Anchor</span>
+                            <h4 class="text-sm font-bold text-white">My Personal Practice Commitment</h4>
+                        </div>
+                        <button onclick="copyAnchorCard()" class="text-[11px] bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded border border-white/15 transition cursor-pointer">
+                            📋 Copy Card
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-ice/70 mb-0.5">My Commitment on the Line:</p>
+                    <p id="card-commitment" class="text-xs sm:text-sm font-semibold text-white mb-3 italic leading-snug"></p>
+                    
+                    <div class="bg-white/5 rounded-lg p-2.5 border-l-3 border-orange">
+                        <p class="text-[11px] text-ice/90 italic">
+                            "Understanding the driver does not excuse the behaviour. But it transforms your response from reactive to purposeful. That is the difference between surviving an encounter and resolving it."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        let activeApiKey = '';
+        let activeRecognition = null;
+        let activeTargetId = null;
+        let activeVoiceButton = null;
+
+        const loginScreen = document.getElementById('login-screen');
+        const reflectionScreen = document.getElementById('reflection-screen');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const unlockBtn = document.getElementById('unlock-btn');
+        const coachVideo = document.getElementById('coach-video');
+        
+        const answer1 = document.getElementById('answer-1');
+        const answer2 = document.getElementById('answer-2');
+        const submitReflectionBtn = document.getElementById('submit-reflection-btn');
+        const coachFeedbackArea = document.getElementById('coach-feedback-area');
+        const feedbackContent = document.getElementById('feedback-content');
+        const cardCommitment = document.getElementById('card-commitment');
+
+        const errorModal = document.getElementById('error-modal');
+        const modalText = document.getElementById('modal-text');
+
+        function showError(msg) {
+            modalText.innerText = msg;
+            errorModal.classList.remove('hidden');
+            errorModal.classList.add('flex');
+        }
+
+        function closeModal() {
+            errorModal.classList.add('hidden');
+            errorModal.classList.remove('flex');
+        }
+
+        unlockBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key.length > 10) {
+                activeApiKey = key;
+                loginScreen.classList.add('hidden');
+                reflectionScreen.classList.remove('hidden');
+                coachVideo.play().catch(e => console.warn("Video auto-play prevented:", e));
+            } else {
+                showError("Please enter a valid Gemini API key.");
+            }
+        });
+
+        function toggleVoiceInput(targetTextareaId, buttonEl) {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showError("Speech recognition is not supported in this browser. Please type your reflection or switch to Chrome/Edge.");
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (activeRecognition && activeTargetId === targetTextareaId) {
+                activeRecognition.stop();
+                return;
+            }
+
+            if (activeRecognition) {
+                activeRecognition.stop();
+            }
+
+            const targetInput = document.getElementById(targetTextareaId);
+            activeTargetId = targetTextareaId;
+            activeVoiceButton = buttonEl;
+
+            activeRecognition = new SpeechRecognition();
+            activeRecognition.continuous = true;
+            activeRecognition.interimResults = true;
+
+            buttonEl.classList.add('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
+            buttonEl.querySelector('span').innerText = "Listening...";
+
+            activeRecognition.onresult = (event) => {
+                let full = '';
+                for (let i = 0; i < event.results.length; ++i) {
+                    full += event.results[i][0].transcript + ' ';
+                }
+                targetInput.value = full.trim();
+            };
+
+            activeRecognition.onerror = (event) => {
+                console.warn("Speech error:", event.error);
+                stopRecordingUI();
+            };
+
+            activeRecognition.onend = () => {
+                stopRecordingUI();
+            };
+
+            try {
+                activeRecognition.start();
+            } catch (err) {
+                console.error(err);
+                stopRecordingUI();
+            }
+        }
+
+        function stopRecordingUI() {
+            if (activeVoiceButton) {
+                activeVoiceButton.classList.remove('recording-pulse', 'bg-orange/20', 'text-orange', 'border-orange');
+                activeVoiceButton.querySelector('span').innerText = "Speak Response";
+            }
+            activeRecognition = null;
+            activeTargetId = null;
+            activeVoiceButton = null;
+        }
+
+        function buildLindsayPrompt(q1Text, q2Text) {
+            return `Role: Dr. Lindsay Dubock (Clinical Director, The Training Network)
+You are a warm, encouraging, and psychologically informed peer coach supporting frontline non-clinical staff in NHS Primary Care (Care Coordinators, Link Workers, Receptionists, Practice Navigators). The learner has completed the entire Kolb learning cycle (Concrete Experience -> Reflective Observation -> Abstract Conceptualisation -> Active Experimentation) and submitted their final two reflection commitments:
+
+Learner's Reflection 1 (What they understand differently about patient behaviour):
+"${q1Text}"
+
+Learner's Reflection 2 (What they will try differently / their chosen action anchor):
+"${q2Text}"
+
+STRICT COACHING LOGIC:
+This is the Module 11 course capstone reflection. Activate your Closing Reflection / Body Anchor Logic:
+- Validate their choice of physical anchor or mindset adjustment as a powerful, practical commitment. Emphasize that a single, specific adjustment (e.g. slowing speech by half, dropping shoulders, depersonalising the ask, validating the GP bond) is far more effective under pressure than trying to remember a long policy script.
+- Send them forward with quiet, grounded clinical confidence.
+
+STRICT TONE & STYLE CONSTRAINTS:
+- NO CONTRACTIONS: Never use abbreviated words. Use full forms at all times (e.g., use "It is", "Do not", "You are", "cannot", "did not").
+- MANDATORY PARAGRAPH BREAKS: Format the feedback into exactly three distinct, short paragraphs.
+- THE "NEXT TIME" RULE: You MUST always start the second paragraph immediately with "Next time" or "Next time you pick up the telephone..."
+- THE "AFFIRMATION" RULE: You MUST always start the third paragraph immediately with "You are already," "You are showing," or "You should be proud."
+- NO BULLET POINTS or structured lists. Keep it fluid, warm, and conversational.
+- STRICT CONTEXT: NHS Primary Care telephone outreach and front-desk reality.
+- FORBIDDEN PHRASES: Never use "land", "show up", "I hear you", "it is worth knowing", "AI Feedback Goal", "Student Input", "Correct", "Miller's Law".
+
+Paragraph 1: Validate what they shared about patient drivers without judgment, honouring the emotional difficulty of NHS frontline consultations.
+Paragraph 2 (Starts with "Next time"): Highlight their practical action anchor from Reflection 2 (e.g., pace, posture, breathing, depersonalising, or holding boundary).
+Paragraph 3 (Starts with "You are already"): Deliver a warm, milestone affirmation that moves them forward into their consultations with confidence.`;
+        }
+
+        submitReflectionBtn.addEventListener('click', async () => {
+            if (activeRecognition) {
+                try { activeRecognition.stop(); } catch (e) {}
+            }
+
+            const q1 = answer1.value.trim();
+            const q2 = answer2.value.trim();
+
+            if (q1.length < 5 || q2.length < 5) {
+                showError("Please provide a brief reflection for both prompts before locking in your debrief.");
+                return;
+            }
+
+            submitReflectionBtn.disabled = true;
+            submitReflectionBtn.innerHTML = `<span class="spinner"></span> Consulting Dr. Lindsay Dubock...`;
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeApiKey}`;
+
+            const requestBody = {
+                systemInstruction: {
+                    parts: [{ text: buildLindsayPrompt(q1, q2) }]
+                },
+                contents: [{
+                    parts: [{ text: "Provide the 3-paragraph Dr. Lindsay Dubock feedback reflection based on the learner's inputs." }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            feedback: { 
+                                type: "STRING", 
+                                description: "Three paragraphs strictly adhering to Dr. Lindsay Dubock coaching constraints and paragraph rules." 
+                            }
+                        },
+                        required: ["feedback"]
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error?.message || "Gemini API call failed");
+                }
+
+                const aiResult = JSON.parse(data.candidates[0].content.parts[0].text);
+
+                feedbackContent.innerText = aiResult.feedback;
+                cardCommitment.innerText = `"${q2}"`;
+                coachFeedbackArea.classList.remove('hidden');
+
+                // Switch coach video to the celebratory closing video
+                coachVideo.src = "Cycle_Finale.mp4";
+                coachVideo.play().catch(e => console.warn(e));
+
+                coachFeedbackArea.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                showError("Feedback generation error: " + err.message);
+            } finally {
+                submitReflectionBtn.innerHTML = "Reflection Completed & Locked In ✓";
+                submitReflectionBtn.className = "w-full bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm text-xs sm:text-sm";
+            }
+        });
+
+        function copyAnchorCard() {
+            const commitment = cardCommitment.innerText;
+            const quote = "Understanding the driver does not excuse the behaviour. But it transforms your response from reactive to purposeful.";
+            const textToCopy = `[PRIMARY CARE ACTION ANCHOR]\nMy Commitment: ${commitment}\nCore Reminder: "${quote}"`;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showError("Action Anchor Card copied! You can paste it into supervision notes or keep it at your desk.");
+        }
+    </script>
+</body>
+</html>
