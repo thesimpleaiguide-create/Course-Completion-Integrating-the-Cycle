@@ -92,28 +92,8 @@
 
     <div class="max-w-3xl w-full bg-white border border-ice rounded-2xl p-4 sm:p-6 shadow-md flex flex-col space-y-4">
 
-        <!-- Screen 1: API Key Unlock Screen -->
-        <div id="login-screen" class="text-center py-6 sm:py-8 space-y-3">
-            <div class="inline-flex items-center space-x-2 px-3 py-1 bg-navy text-white text-[11px] font-bold rounded-full uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
-                <span>Module 11 • Integration & Action</span>
-            </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-navy">You've Completed the Cycle</h1>
-            <p class="text-slate/75 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
-                Enter your Gemini API key to unlock your personal reflection debrief with Dr. Lindsay Dubock.
-            </p>
-            <div class="max-w-md mx-auto flex flex-col sm:flex-row gap-2 pt-2">
-                <input type="password" id="api-key-input" placeholder="Paste Gemini API Key (AIza...)" 
-                       class="flex-1 bg-slate-50 border border-ice rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-navy focus:outline-none focus:border-navy transition">
-                <button id="unlock-btn" class="bg-navy hover:bg-trust text-white font-bold px-5 py-2.5 rounded-xl transition text-xs sm:text-sm cursor-pointer shadow-sm shrink-0">
-                    Enter Module
-                </button>
-            </div>
-            <p class="text-[10px] text-slate/40 pt-1">Key is held only in your browser session memory.</p>
-        </div>
-
-        <!-- Screen 2: Reflection & Video Experience Screen -->
-        <div id="reflection-screen" class="hidden space-y-4">
+        <!-- Screen: Reflection & Video Experience Screen -->
+        <div id="reflection-screen" class="space-y-4">
             
             <!-- Top Header & Cycle Stage Pill -->
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ice/80 pb-3">
@@ -155,29 +135,8 @@
                     </div>
                     <p class="text-[11px] text-slate/60">Consider the Iceberg, hidden fear, shame, or biological stress responses.</p>
                     
-                    <textarea id="answer-1" rows="2" placeholder="Type your personal takeaway, click an idea chip, or use guided auto-fill..."
+                    <textarea id="answer-1" rows="3" placeholder="Type your reflection here..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
-                    
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div class="flex flex-wrap gap-1">
-                            <button type="button" onclick="insertStarter('answer-1', 'Their pushback is clinical data indicating shame and fear, not personal disrespect.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Clinical data, not disrespect"
-                            </button>
-                            <button type="button" onclick="insertStarter('answer-1', 'When an amygdala is flooded, rational policy explanation bounces off.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Flooded amygdala"
-                            </button>
-                            <button type="button" onclick="insertStarter('answer-1', 'Behind their hostile barrier is a person trying to protect their dignity.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Protecting dignity"
-                            </button>
-                        </div>
-                        <button type="button" onclick="autoFillResponse('answer-1', this)" 
-                                class="chip-btn text-[11px] bg-sky-50 hover:bg-sky-100 text-trust px-3 py-1 rounded-lg border border-sky-200 flex items-center gap-1.5 transition cursor-pointer font-medium shadow-2xs">
-                            ✨ <span>Guided Suggestion</span>
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Question 2: Action Shift -->
@@ -191,29 +150,8 @@
                     </div>
                     <p class="text-[11px] text-slate/60">Choose a concrete anchor: vocal pace, breathing, depersonalising the ask, or holding the boundary.</p>
                     
-                    <textarea id="answer-2" rows="2" placeholder="Type your concrete action or select an action starter below..."
+                    <textarea id="answer-2" rows="3" placeholder="Type your concrete practice commitment here..."
                               class="w-full border border-ice rounded-lg p-2.5 text-xs sm:text-sm text-navy notebook-lines focus:outline-none focus:border-navy transition resize-none"></textarea>
-                    
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div class="flex flex-wrap gap-1">
-                            <button type="button" onclick="insertStarter('answer-2', 'When they speed up, I will drop my vocal pitch and slow my speech by half.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Half speed & lower pitch"
-                            </button>
-                            <button type="button" onclick="insertStarter('answer-2', 'I will validate their GP bond and autonomy before quoting any guidelines.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Validate GP bond first"
-                            </button>
-                            <button type="button" onclick="insertStarter('answer-2', 'I will take a slow breath and hold the protocol with steady kindness.')"
-                                    class="chip-btn text-[10px] bg-slate-100 hover:bg-ice text-slate-700 px-2 py-1 rounded-md border border-ice transition cursor-pointer">
-                                + "Protocol with kindness"
-                            </button>
-                        </div>
-                        <button type="button" onclick="autoFillResponse('answer-2', this)" 
-                                class="chip-btn text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 px-3 py-1 rounded-lg border border-amber-200 flex items-center gap-1.5 transition cursor-pointer font-medium shadow-2xs">
-                            ✨ <span>Guided Suggestion</span>
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Submit Action Button -->
@@ -262,19 +200,7 @@
     </div>
 
     <script>
-        let activeApiKey = '';
-
-        const guidedReflections = {
-            'answer-1': "Their pushback is clinical data indicating acute shame, fear of abandonment, and loss of control, rather than a personal attack on my role.",
-            'answer-2': "When the patient speeds up, I will drop my vocal pitch, slow my speech by half, and validate their autonomy before quoting any practice guidelines."
-        };
-
-        const loginScreen = document.getElementById('login-screen');
-        const reflectionScreen = document.getElementById('reflection-screen');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const unlockBtn = document.getElementById('unlock-btn');
         const coachVideo = document.getElementById('coach-video');
-        
         const answer1 = document.getElementById('answer-1');
         const answer2 = document.getElementById('answer-2');
         const submitReflectionBtn = document.getElementById('submit-reflection-btn');
@@ -308,166 +234,44 @@
             errorModal.classList.remove('flex');
         }
 
-        function insertStarter(targetId, text) {
-            const el = document.getElementById(targetId);
-            if (!el) return;
-            if (el.value.trim().length > 0) {
-                el.value = el.value.trim() + " " + text;
-            } else {
-                el.value = text;
-            }
-            el.focus();
+        function generateLindsayFeedback(q1, q2) {
+            const p1 = `What you have recognized regarding patient behaviour touches the core of primary care practice. When an individual reacts with hostility, sharp defensiveness, or withdrawal, it is almost never about personal malice. You are seeing clinical data that indicates fear, acute shame, or a profound loss of control. Honouring that emotional reality allows you to step out of the combat zone and protect your own energy.`;
+
+            const p2 = `Next time you pick up the telephone or sit at your consultation desk, lean directly into your commitment: "${q2}". Choosing a single, clear action anchor is far more dependable under pressure than attempting to recall a complicated policy script. When you hold that steady posture, you disrupt the contagion of dysregulation and give the other person permission to settle.`;
+
+            const p3 = `You are already bringing genuine psychological insight and grounded clinical leadership into your daily practice. Completing this cycle proves that you are not simply surviving these difficult encounters; you are learning how to resolve them with purpose and compassion. Take pride in how far your practice has come.`;
+
+            return `${p1}\n\n${p2}\n\n${p3}`;
         }
 
-        function autoFillResponse(targetId, btnEl) {
-            const textToType = guidedReflections[targetId];
-            const target = document.getElementById(targetId);
-            
-            target.value = "";
-            let idx = 0;
-            if (btnEl) {
-                btnEl.classList.add('bg-orange/10', 'text-orange', 'border-orange');
-                const labelSpan = btnEl.querySelector('span');
-                if (labelSpan) labelSpan.innerText = "Generating suggestion...";
-            }
-
-            const typingInterval = setInterval(() => {
-                if (idx < textToType.length) {
-                    target.value += textToType.charAt(idx);
-                    idx++;
-                } else {
-                    clearInterval(typingInterval);
-                    if (btnEl) {
-                        btnEl.classList.remove('bg-orange/10', 'text-orange', 'border-orange');
-                        const labelSpan = btnEl.querySelector('span');
-                        if (labelSpan) labelSpan.innerText = "Suggested ✓";
-                        setTimeout(() => {
-                            if (labelSpan) {
-                                labelSpan.innerText = "Guided Suggestion";
-                            }
-                        }, 2400);
-                    }
-                }
-            }, 10);
-        }
-
-        function handleUnlock() {
-            const key = apiKeyInput.value.trim();
-            if (key.length > 10) {
-                activeApiKey = key;
-                loginScreen.classList.add('hidden');
-                reflectionScreen.classList.remove('hidden');
-                coachVideo.play().catch(e => console.warn("Video auto-play prevented:", e));
-            } else {
-                showError("Please enter a valid Gemini API key.");
-            }
-        }
-
-        unlockBtn.addEventListener('click', handleUnlock);
-
-        apiKeyInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleUnlock();
-            }
-        });
-
-        function buildLindsayPrompt(q1Text, q2Text) {
-            return `Role: Dr. Lindsay Dubock (Clinical Director, The Training Network)
-You are a warm, encouraging, and psychologically informed peer coach supporting frontline non-clinical staff in NHS Primary Care (Care Coordinators, Link Workers, Receptionists, Practice Navigators). The learner has completed the entire Kolb learning cycle (Concrete Experience -> Reflective Observation -> Abstract Conceptualisation -> Active Experimentation) and submitted their final two reflection commitments:
-
-Learner's Reflection 1 (What they understand differently about patient behaviour):
-"${q1Text}"
-
-Learner's Reflection 2 (What they will try differently / their chosen action anchor):
-"${q2Text}"
-
-STRICT COACHING LOGIC:
-This is the Module 11 course capstone reflection. Activate your Closing Reflection / Body Anchor Logic:
-- Validate their choice of physical anchor or mindset adjustment as a powerful, practical commitment. Emphasize that a single, specific adjustment (e.g. slowing speech by half, dropping shoulders, depersonalising the ask, validating the GP bond) is far more effective under pressure than trying to remember a long policy script.
-- Send them forward with quiet, grounded clinical confidence.
-
-STRICT TONE & STYLE CONSTRAINTS:
-- NO CONTRACTIONS: Never use abbreviated words. Use full forms at all times (e.g., use "It is", "Do not", "You are", "cannot", "did not").
-- MANDATORY PARAGRAPH BREAKS: Format the feedback into exactly three distinct, short paragraphs.
-- THE "NEXT TIME" RULE: You MUST always start the second paragraph immediately with "Next time" or "Next time you pick up the telephone..."
-- THE "AFFIRMATION" RULE: You MUST always start the third paragraph immediately with "You are already," "You are showing," or "You should be proud."
-- NO BULLET POINTS or structured lists. Keep it fluid, warm, and conversational.
-- STRICT CONTEXT: NHS Primary Care telephone outreach and front-desk reality.
-- FORBIDDEN PHRASES: Never use "land", "show up", "I hear you", "it is worth knowing", "AI Feedback Goal", "Student Input", "Correct", "Miller's Law".
-
-Paragraph 1: Validate what they shared about patient drivers without judgment, honouring the emotional difficulty of NHS frontline consultations.
-Paragraph 2 (Starts with "Next time"): Highlight their practical action anchor from Reflection 2 (e.g., pace, posture, breathing, depersonalising, or holding boundary).
-Paragraph 3 (Starts with "You are already"): Deliver a warm, milestone affirmation that moves them forward into their consultations with confidence.`;
-        }
-
-        submitReflectionBtn.addEventListener('click', async () => {
+        submitReflectionBtn.addEventListener('click', () => {
             const q1 = answer1.value.trim();
             const q2 = answer2.value.trim();
 
-            if (q1.length < 5 || q2.length < 5) {
-                showError("Please provide a reflection for both prompts before locking in your debrief.");
+            if (q1.length < 3 || q2.length < 3) {
+                showError("Please type a brief thought into both reflection prompts before locking in your debrief.");
                 return;
             }
 
             submitReflectionBtn.disabled = true;
-            submitReflectionBtn.innerHTML = `<span class="spinner"></span> Consulting Dr. Lindsay Dubock...`;
+            submitReflectionBtn.innerHTML = `<span class="spinner"></span> Locking In Debrief...`;
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeApiKey}`;
+            setTimeout(() => {
+                const feedbackText = generateLindsayFeedback(q1, q2);
 
-            const requestBody = {
-                systemInstruction: {
-                    parts: [{ text: buildLindsayPrompt(q1, q2) }]
-                },
-                contents: [{
-                    parts: [{ text: "Provide the 3-paragraph Dr. Lindsay Dubock feedback reflection based on the learner's inputs." }]
-                }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            feedback: { 
-                                type: "STRING", 
-                                description: "Three paragraphs strictly adhering to Dr. Lindsay Dubock coaching constraints and paragraph rules." 
-                            }
-                        },
-                        required: ["feedback"]
-                    }
-                }
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error?.message || "Gemini API call failed");
-                }
-
-                const aiResult = JSON.parse(data.candidates[0].content.parts[0].text);
-
-                feedbackContent.innerText = aiResult.feedback;
+                feedbackContent.innerText = feedbackText;
                 cardCommitment.innerText = `"${q2}"`;
                 coachFeedbackArea.classList.remove('hidden');
 
-                // Switch coach video to the celebratory closing video
+                // Switch video to celebratory closing video
                 coachVideo.src = "Cycle_Finale.mp4";
-                coachVideo.play().catch(e => console.warn(e));
+                coachVideo.play().catch(e => console.warn("Autoplay note:", e));
 
-                coachFeedbackArea.scrollIntoView({ behavior: 'smooth' });
-
-            } catch (err) {
-                showError("Feedback generation error: " + err.message);
-            } finally {
                 submitReflectionBtn.innerHTML = "Reflection Completed & Locked In ✓";
                 submitReflectionBtn.className = "w-full bg-emerald-700 text-white font-bold py-3 px-5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm text-xs sm:text-sm";
-            }
+
+                coachFeedbackArea.scrollIntoView({ behavior: 'smooth' });
+            }, 600);
         });
 
         function copyAnchorCard() {
