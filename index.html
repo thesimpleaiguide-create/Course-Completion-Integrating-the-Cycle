@@ -314,6 +314,20 @@
 
         function closeModal() {
             errorModal.classList.add('hidden');
+            errorModal.classList.remove('flex');
+        }
+
+        function insertStarter(targetId, text) {
+            const el = document.getElementById(targetId);
+            if (!el) return;
+            if (el.value.trim().length > 0) {
+                el.value = el.value.trim() + " " + text;
+            } else {
+                el.value = text;
+            }
+            el.focus();
+        }
+
         function autoFillResponse(targetId, btnEl, customDoneMessage) {
             const textToType = automatedReflections[targetId];
             const target = document.getElementById(targetId);
@@ -346,7 +360,7 @@
             }, 12);
         }
 
-        unlockBtn.addEventListener('click', () => {
+        function handleUnlock() {
             const key = apiKeyInput.value.trim();
             if (key.length > 10) {
                 activeApiKey = key;
@@ -355,6 +369,15 @@
                 coachVideo.play().catch(e => console.warn("Video auto-play prevented:", e));
             } else {
                 showError("Please enter a valid Gemini API key.");
+            }
+        }
+
+        unlockBtn.addEventListener('click', handleUnlock);
+
+        apiKeyInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleUnlock();
             }
         });
 
