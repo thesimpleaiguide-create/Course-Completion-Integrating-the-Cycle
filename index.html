@@ -332,11 +332,75 @@
         }
 
         function generateLindsayFeedback(q1, q2) {
-            const p1 = `What you have recognized regarding patient behaviour touches the core of primary care practice. When an individual reacts with hostility, sharp defensiveness, or withdrawal, it is almost never about personal malice. You are seeing clinical data that indicates fear, acute shame, or a profound loss of control. Honouring that emotional reality allows you to step out of the combat zone and protect your own energy.`;
+            const raw1 = (q1 || "").trim();
+            const raw2 = (q2 || "").trim();
+            const lower1 = raw1.toLowerCase();
+            const lower2 = raw2.toLowerCase();
 
-            const p2 = `Next time you pick up the telephone or sit at your consultation desk, lean directly into your commitment: "${q2}". Choosing a single, clear action anchor is far more dependable under pressure than attempting to recall a complicated policy script. When you hold that steady posture, you disrupt the contagion of dysregulation and give the other person permission to settle.`;
+            // Sanitize learner action anchor to ensure zero contractions if quoted
+            function sanitizeContractions(str) {
+                return str
+                    .replace(/\bcan't\b/gi, "cannot")
+                    .replace(/\bwon't\b/gi, "will not")
+                    .replace(/\bdon't\b/gi, "do not")
+                    .replace(/\bit's\b/gi, "it is")
+                    .replace(/\bi'm\b/gi, "I am")
+                    .replace(/\byou're\b/gi, "you are")
+                    .replace(/\bthey're\b/gi, "they are")
+                    .replace(/\bwe're\b/gi, "we are")
+                    .replace(/\bthat's\b/gi, "that is")
+                    .replace(/\bwhat's\b/gi, "what is")
+                    .replace(/\bthere's\b/gi, "there is")
+                    .replace(/\bisn't\b/gi, "is not")
+                    .replace(/\baren't\b/gi, "are not")
+                    .replace(/\bwasn't\b/gi, "was not")
+                    .replace(/\bweren't\b/gi, "were not")
+                    .replace(/\bdoesn't\b/gi, "does not")
+                    .replace(/\bdidn't\b/gi, "did not")
+                    .replace(/\blet's\b/gi, "let us");
+            }
 
-            const p3 = `You are already bringing genuine psychological insight and grounded clinical leadership into your daily practice. Completing this cycle proves that you are not simply surviving these difficult encounters; you are learning how to resolve them with purpose and compassion. Take pride in how far your practice has come.`;
+            const cleanAnchor = sanitizeContractions(raw2).replace(/[.!?;]+$/, "");
+
+            // 1. Paragraph 1: Validation & Normalization (Course taxonomy aware)
+            let p1 = "";
+            if (lower1.includes("shame") || lower1.includes("dignity") || lower1.includes("pride") || lower1.includes("humiliat") || lower1.includes("audit") || lower1.includes("fail")) {
+                p1 = "Recognizing that patient defensiveness often masks acute shame and a threat to adult dignity shows an exceptional clinical eye. When individuals feel evaluated by the practice, their nervous system weaponizes anger to shield themselves from humiliation.";
+            } else if (lower1.includes("fear") || lower1.includes("anxiety") || lower1.includes("panic") || lower1.includes("gp") || lower1.includes("doctor") || lower1.includes("abandon")) {
+                p1 = "Understanding that demanding a general practitioner or dismissing your role is an expression of deep fear allows you to depersonalize that resistance entirely. The patient is not attacking your competence, but desperately trying to protect their clinical safety anchor.";
+            } else if (lower1.includes("control") || lower1.includes("autonomy") || lower1.includes("choice") || lower1.includes("agency")) {
+                p1 = "Identifying loss of control as the hidden driver behind stubborn pushback touches the heart of proactive primary care. When living with long-term illness strips a person of their independence, fighting for control of a telephone call is often the only agency they have left.";
+            } else if (lower1.includes("trauma") || lower1.includes("past") || lower1.includes("history") || lower1.includes("delay") || lower1.includes("exhaust")) {
+                p1 = "Recognizing that sudden rage is often learned behavior from past systemic disappointment allows you to step out of the combat zone. You are simply holding the telephone when their accumulated frustration gives way.";
+            } else if (lower1.includes("iceberg") || lower1.includes("waterline") || lower1.includes("90") || lower1.includes("beneath") || lower1.includes("driver")) {
+                p1 = "Treating difficult patient behaviour as the visible ten percent of an iceberg transforms your entire role at the front desk. Seeing hostility as clinical data rather than personal malice is what keeps your own nervous system steady under pressure.";
+            } else if (lower1.includes("biology") || lower1.includes("brain") || lower1.includes("amygdala") || lower1.includes("flood") || lower1.includes("stress") || lower1.includes("offline")) {
+                p1 = "Acknowledging that an escalated patient is experiencing autonomic flooding reminds us why rational argument fails in the opening seconds. When fight or flight takes over, the prefrontal cortex goes offline and words bounce straight off.";
+            } else {
+                p1 = "Recognizing that difficult patient pushback is clinical data rather than personal malice demonstrates a profound shift in your practice. Seeing the distress beneath the surface is what allows you to protect your own energy while de-escalating the conversation.";
+            }
+
+            // 2. Paragraph 2: Practical Action (Strict "Next time" opener)
+            let p2 = "";
+            if (lower2.includes("pace") || lower2.includes("slow") || lower2.includes("pitch") || lower2.includes("tone") || lower2.includes("voice") || lower2.includes("breath") || lower2.includes("shoulder")) {
+                p2 = `Next time you pick up the telephone or greet a patient at the desk, leaning directly into your commitment to ${cleanAnchor} will disrupt the contagion of dysregulation immediately. When you lower your pitch and cut your speed by half, you give their flooded nervous system physical permission to settle.`;
+            } else if (lower2.includes("choice") || lower2.includes("control") || lower2.includes("autonomy") || lower2.includes("option")) {
+                p2 = `Next time you encounter rigid pushback on the phone, bringing in your practice anchor to ${cleanAnchor} will disarm their fight for control without debate. Offering a clear micro-choice restores their sense of dignity before tension can escalate.`;
+            } else if (lower2.includes("depersonal") || lower2.includes("everyone") || lower2.includes("routine") || lower2.includes("pathway") || lower2.includes("standard")) {
+                p2 = `Next time an unannounced review triggers defensiveness, remembering to ${cleanAnchor} will strip away the feeling of being singled out. Normalizing the conversation as a routine practice standard dissolves the threat of judgment before it takes root.`;
+            } else if (lower2.includes("boundary") || lower2.includes("protocol") || lower2.includes("hold") || lower2.includes("limit") || lower2.includes("firm")) {
+                p2 = `Next time a conversation becomes contentious, holding firm to your commitment to ${cleanAnchor} will keep your boundary solid without provoking an argument. Validating their distress while holding practice protocol proves that firmness and compassion can exist in the exact same sentence.`;
+            } else {
+                p2 = `Next time you are faced with a challenging call at the practice, anchoring yourself in your decision to ${cleanAnchor} will keep your response purposeful rather than reactive. Relying on this single, concrete move will guide you far more reliably than trying to recall a complicated policy script.`;
+            }
+
+            // 3. Paragraph 3: Affirmation & Forward Motion (Strict "You are already" / "You are showing" opener)
+            let p3 = "";
+            if (lower1.includes("shame") || lower1.includes("trauma") || lower1.includes("fear")) {
+                p3 = "You are already bringing genuine psychological insight and clinical leadership to your practice. Completing this entire cycle proves that you possess both the skill and the resilience to guide our patients through their most vulnerable moments.";
+            } else {
+                p3 = "You are showing the steady, compassionate professionalism that defines excellence in primary care. You should be proud of your commitment to completing this training cycle and transforming your insight into dependable action.";
+            }
 
             return `${p1}\n\n${p2}\n\n${p3}`;
         }
