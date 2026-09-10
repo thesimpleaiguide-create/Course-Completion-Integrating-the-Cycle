@@ -67,7 +67,6 @@
             transform: translateY(-1px);
         }
 
-        /* Pop-out modal animation */
         .modal-fade-in {
             animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -85,7 +84,7 @@
         <span id="toast-text">Notice</span>
     </div>
 
-    <!-- Error / Modal Dialogue -->
+    <!-- Error / Alert Modal -->
     <div id="error-modal" class="fixed inset-0 bg-navy/80 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
         <div class="bg-white border border-ice rounded-xl max-w-md w-full p-5 shadow-2xl">
             <div class="flex items-center space-x-2 text-orange font-bold text-sm mb-2">
@@ -119,7 +118,45 @@
                 </button>
             </div>
 
-    <!-- Main Container: Widescreen Responsive Dashboard (Expanded to max-w-6xl) -->
+            <!-- Modal Content Body -->
+            <div class="p-5 sm:p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+                <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-4 text-xs sm:text-[13px] text-emerald-950 leading-relaxed space-y-3">
+                    <div class="font-bold text-emerald-900 border-b border-emerald-200/70 pb-1.5 flex items-center space-x-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                        <span>Clinical Feedback:</span>
+                    </div>
+                    <div id="feedback-content" class="whitespace-pre-wrap leading-relaxed"></div>
+                </div>
+
+                <!-- Modal Personal Action Card -->
+                <div class="bg-navy text-white rounded-xl p-4 border border-white/15 shadow-sm space-y-2">
+                    <div class="flex justify-between items-start border-b border-white/10 pb-2">
+                        <div>
+                            <span class="text-[9px] font-bold tracking-widest text-orange uppercase">Frontline Action Anchor</span>
+                            <h4 class="text-xs sm:text-sm font-bold text-white">My Practice Commitment</h4>
+                        </div>
+                        <button onclick="copyAnchorCard()" class="text-[10px] bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded border border-white/15 transition cursor-pointer">
+                            📋 Copy Card
+                        </button>
+                    </div>
+                    <p id="card-commitment" class="text-xs sm:text-sm font-semibold text-white italic leading-snug"></p>
+                    <div class="bg-white/5 rounded-lg p-2.5 border-l-3 border-orange text-[11px] text-ice/85 italic">
+                        "Understanding the driver does not excuse the behaviour. But it transforms your response from reactive to purposeful."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 px-5 py-3 border-t border-ice flex justify-end">
+                <button onclick="closeResultsModal()" class="bg-navy hover:bg-trust text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer">
+                    Done
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Main Container: Widescreen Responsive Dashboard (max-w-6xl) -->
     <div class="max-w-6xl w-full bg-white border border-ice rounded-2xl p-4 sm:p-6 md:p-7 shadow-sm flex flex-col space-y-4">
 
         <!-- Top Header & Cycle Stage Pill -->
@@ -139,7 +176,7 @@
             <!-- LEFT COLUMN: Video & Pedagogical Summary (5 cols) -->
             <div class="lg:col-span-5 flex flex-col justify-between space-y-3">
                 
-                <!-- Video Player Container (Expanded 16:9) -->
+                <!-- Video Player Container (16:9 Aspect Ratio) -->
                 <div class="rounded-xl overflow-hidden bg-black border border-ice aspect-video w-full relative shadow-xs">
                     <video id="coach-video" class="w-full h-full object-cover" controls playsinline poster="./facing_camera.jpeg">
                         <source src="Cycle_Intro.mp4" type="video/mp4">
@@ -297,6 +334,14 @@
             const toast = document.getElementById('toast-msg');
             const text = document.getElementById('toast-text');
             text.innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
+
         function insertStarter(textareaId, text) {
             const el = document.getElementById(textareaId);
             if (el) {
@@ -332,7 +377,6 @@
             const lower1 = raw1.toLowerCase();
             const lower2 = raw2.toLowerCase();
 
-            // Sanitize learner action anchor to ensure zero contractions if quoted
             function sanitizeContractions(str) {
                 return str
                     .replace(/\bcan't\b/gi, "cannot")
@@ -357,7 +401,7 @@
 
             const cleanAnchor = sanitizeContractions(raw2).replace(/[.!?;]+$/, "");
 
-            // 1. Paragraph 1: Validation & Normalization (Course taxonomy aware)
+            // 1. Paragraph 1: Validation & Cognitive Shift
             let p1 = "";
             if (lower1.includes("shame") || lower1.includes("dignity") || lower1.includes("pride") || lower1.includes("humiliat") || lower1.includes("audit") || lower1.includes("fail")) {
                 p1 = "Recognizing that patient defensiveness often masks acute shame and a threat to adult dignity shows an exceptional clinical eye. When individuals feel evaluated by the practice, their nervous system weaponizes anger to shield themselves from humiliation.";
@@ -375,7 +419,7 @@
                 p1 = "Recognizing that difficult patient pushback is clinical data rather than personal malice demonstrates a profound shift in your practice. Seeing the distress beneath the surface is what allows you to protect your own energy while de-escalating the conversation.";
             }
 
-            // 2. Paragraph 2: Practical Action (Strict "Next time" opener)
+            // 2. Paragraph 2: Practical Application
             let p2 = "";
             if (lower2.includes("pace") || lower2.includes("slow") || lower2.includes("pitch") || lower2.includes("tone") || lower2.includes("voice") || lower2.includes("breath") || lower2.includes("shoulder")) {
                 p2 = `Next time you pick up the telephone or greet a patient at the desk, leaning directly into your commitment to ${cleanAnchor} will disrupt the contagion of dysregulation immediately. When you lower your pitch and cut your speed by half, you give their flooded nervous system physical permission to settle.`;
@@ -389,7 +433,7 @@
                 p2 = `Next time you are faced with a challenging call at the practice, anchoring yourself in your decision to ${cleanAnchor} will keep your response purposeful rather than reactive. Relying on this single, concrete move will guide you far more reliably than trying to recall a complicated policy script.`;
             }
 
-            // 3. Paragraph 3: Affirmation & Forward Motion (Strict "You are already" / "You are showing" opener)
+            // 3. Paragraph 3: Affirmation
             let p3 = "";
             if (lower1.includes("shame") || lower1.includes("trauma") || lower1.includes("fear")) {
                 p3 = "You are already bringing genuine psychological insight and clinical leadership to your practice. Completing this entire cycle proves that you possess both the skill and the resilience to guide our patients through their most vulnerable moments.";
